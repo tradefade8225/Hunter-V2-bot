@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hunter V4.0 | Optimized</title>
+    <title>Hunter V4.1 | Stabilizer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #020202; color: #cbd5e1; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        body { font-family: 'Inter', sans-serif; background: #010409; color: #cbd5e1; }
+        .glass { background: rgba(13, 17, 23, 0.8); backdrop-filter: blur(16px); border: 1px solid rgba(255,255,255,0.03); }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        .win { color: #4ade80; } .loss { color: #f87171; } .info { color: #60a5fa; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .bar-transition { transition: height 0.3s ease; }
-        select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='C19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1rem; }
+        .win { color: #4ade80; text-shadow: 0 0 10px rgba(74, 222, 128, 0.2); }
+        .loss { color: #f87171; text-shadow: 0 0 10px rgba(248, 113, 113, 0.2); }
+        .status-wait { animation: pulse 2s infinite; color: #fbbf24; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body class="p-4 lg:p-10">
@@ -21,13 +21,10 @@
     <div class="max-w-7xl mx-auto space-y-6">
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-white/5 pb-8">
             <div>
-                <h1 class="text-4xl font-black text-white italic tracking-tighter uppercase">Hunter <span class="text-blue-500">V4.0</span></h1>
-                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em]">Optimized Logic • Risk Guard</p>
+                <h1 class="text-4xl font-black text-white italic tracking-tighter uppercase">Hunter <span class="text-yellow-500">V4.1</span></h1>
+                <p class="text-[10px] font-bold text-slate-500 uppercase tracking-[0.3em]">Stabilizer Logic • Anti-Streak Guard</p>
             </div>
-            <div class="flex gap-3 w-full md:w-auto">
-                <select id="activeAccount" onchange="loadSelectedAccount()" class="glass flex-1 md:flex-none rounded-xl px-5 py-3 text-xs font-bold text-white outline-none border-blue-500/20"></select>
-                <div id="connBadge" class="px-5 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase flex items-center">Offline</div>
-            </div>
+            <div id="connBadge" class="px-5 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase">Offline</div>
         </div>
 
         <div class="grid grid-cols-12 gap-6">
@@ -36,203 +33,141 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="text-[9px] font-black text-slate-500 uppercase">Target ($)</label>
-                            <input type="number" id="targetProfit" class="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-sm font-bold text-white outline-none">
+                            <input type="number" id="targetProfit" value="5.00" class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-sm font-bold text-white outline-none">
                         </div>
                         <div>
-                            <label class="text-[9px] font-black text-slate-500 uppercase">Floor ($)</label>
-                            <input type="number" id="minBalance" class="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-sm font-bold text-white outline-none">
+                            <label class="text-[9px] font-black text-slate-500 uppercase">Stop Loss ($)</label>
+                            <input type="number" id="minBalance" value="50.00" class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-sm font-bold text-white outline-none">
                         </div>
                     </div>
                     
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="text-[9px] font-black text-slate-500 uppercase">Base Stake</label>
-                            <input type="number" id="stakeAwal" class="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-sm font-bold text-white outline-none">
+                            <input type="number" id="stakeAwal" value="0.35" class="w-full bg-black/40 border border-white/10 rounded-2xl p-4 text-sm font-bold text-white outline-none">
                         </div>
                         <div>
-                            <label class="text-[9px] font-black text-blue-400 uppercase">Max Steps</label>
-                            <input type="number" id="maxSteps" value="5" class="w-full bg-slate-900 border border-blue-500/30 rounded-2xl p-4 text-sm font-black text-white outline-none">
+                            <label class="text-[9px] font-black text-yellow-500 uppercase">Cool-down (s)</label>
+                            <input type="number" id="cooldownSec" value="60" class="w-full bg-black/40 border border-yellow-500/30 rounded-2xl p-4 text-sm font-black text-white outline-none">
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
-                        <select id="martingaleX" class="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-xs font-black text-white outline-none">
-                            <option value="8">8x Multi</option>
-                            <option value="11" selected>11x Multi</option>
-                            <option value="15">15x Multi</option>
-                        </select>
-                        <select id="probLimit" class="w-full bg-slate-900 border border-white/10 rounded-2xl p-4 text-xs font-black text-white outline-none">
-                            <option value="5">5% Gate</option>
-                            <option value="8" selected>8% Gate</option>
-                            <option value="12">12% Gate</option>
-                        </select>
+                    <div class="p-4 bg-yellow-500/5 border border-yellow-500/10 rounded-2xl">
+                        <p class="text-[10px] text-yellow-500 font-bold mb-2 uppercase">Safety Advice</p>
+                        <p class="text-[10px] text-slate-400 leading-relaxed">Lower your base stake to **$0.35** and target small 2-3% gains per session to avoid the Martingale trap.</p>
                     </div>
 
-                    <button id="btnAction" onclick="toggleBot()" class="w-full bg-blue-600 py-5 rounded-[1.5rem] font-black text-white text-[12px] uppercase tracking-widest transition-all hover:bg-blue-500">Start Optimized Engine</button>
-                </div>
-
-                <div class="glass p-6 rounded-[2.5rem] space-y-4">
-                    <p class="text-[9px] font-black text-slate-500 uppercase text-center tracking-widest">Digit Frequency (Last 100)</p>
-                    <div id="digitChart" class="flex items-end justify-between h-24 px-2 gap-1">
-                        </div>
+                    <button id="btnAction" onclick="toggleBot()" class="w-full bg-yellow-600 py-5 rounded-[1.5rem] font-black text-white text-[12px] uppercase tracking-widest transition-all hover:bg-yellow-500">Engage Stabilizer</button>
                 </div>
             </div>
 
             <div class="col-span-12 lg:col-span-8 space-y-6">
                 <div class="grid grid-cols-4 gap-4">
-                    <div class="glass p-6 rounded-[2rem] border-l-2 border-blue-500">
-                        <p class="text-[9px] font-black text-slate-500 uppercase">Balance</p>
-                        <p id="statBalance" class="text-xl font-black mono text-white truncate">$0.00</p>
+                    <div class="glass p-6 rounded-[2rem] border-l-2 border-yellow-500">
+                        <p class="text-[9px] font-black text-slate-500 uppercase">Status</p>
+                        <p id="statStatus" class="text-sm font-black mono text-white truncate">Standby</p>
                     </div>
                     <div class="glass p-6 rounded-[2rem]">
-                        <p class="text-[9px] font-black text-slate-500 uppercase">Profit</p>
+                        <p class="text-[9px] font-black text-slate-500 uppercase">Session</p>
                         <p id="statProfit" class="text-xl font-black mono text-white">$0.00</p>
                     </div>
                     <div class="glass p-6 rounded-[2rem]">
-                        <p class="text-[9px] font-black text-slate-500 uppercase">Gate Stat</p>
+                        <p class="text-[9px] font-black text-slate-500 uppercase">Safety Gate</p>
                         <p id="statProb" class="text-xl font-black mono text-blue-400">0.0%</p>
                     </div>
                     <div class="glass p-6 rounded-[2rem]">
-                        <p class="text-[9px] font-black text-slate-500 uppercase">Steps</p>
-                        <p id="statSteps" class="text-xl font-black mono text-white">0/0</p>
+                        <p class="text-[9px] font-black text-slate-500 uppercase">Next</p>
+                        <p id="statNextStake" class="text-xl font-black mono text-white">$0.00</p>
                     </div>
                 </div>
 
                 <div class="glass rounded-[2.5rem] overflow-hidden flex flex-col h-[400px]">
-                    <div class="p-4 px-8 border-b border-white/5 flex justify-between items-center bg-white/5">
-                        <span class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Optimization Feed</span>
-                        <button onclick="clearJournal()" class="text-[9px] font-black text-slate-500 hover:text-white uppercase">Clear</button>
+                    <div id="log" class="p-8 flex-1 overflow-y-auto text-[11px] mono space-y-2 no-scrollbar scroll-smooth">
+                        <div class="text-slate-500 uppercase text-[9px] font-bold tracking-widest mb-4">System Shield Active</div>
                     </div>
-                    <div id="log" class="p-8 flex-1 overflow-y-auto text-[11px] mono space-y-2 no-scrollbar scroll-smooth"></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div id="accountModal" class="fixed inset-0 bg-black/95 hidden items-center justify-center p-6 z-50 backdrop-blur-md">
-        <div class="glass p-10 rounded-[3rem] w-full max-w-sm border border-white/10 text-center">
-            <h3 class="text-xl font-black text-white mb-6 uppercase italic">Add Profile</h3>
-            <div class="space-y-4">
-                <input type="text" id="newAccName" placeholder="Profile Name" class="w-full bg-slate-900 border border-white/10 p-4 rounded-xl outline-none text-white">
-                <input type="password" id="newAccToken" placeholder="Deriv API Token" class="w-full bg-slate-900 border border-white/10 p-4 rounded-xl outline-none text-white">
-                <button onclick="saveNewAccount()" class="w-full bg-blue-600 py-4 rounded-xl font-black text-white uppercase text-xs">Authorize</button>
-                <button onclick="closeAccountModal()" class="w-full text-slate-500 text-[10px] font-bold uppercase">Back</button>
-            </div>
-        </div>
-    </div>
-
-    <button onclick="openAccountModal()" class="fixed bottom-8 right-8 w-14 h-14 bg-blue-600 rounded-full text-white font-black shadow-xl z-40 text-2xl flex items-center justify-center hover:scale-110 transition-transform">+</button>
+    <select id="activeAccount" class="hidden"></select>
 
     <script>
         const APP_ID = '1089';
-        let ws, isRunning = false, isBuying = false, accounts = JSON.parse(localStorage.getItem('hunter_accounts') || '[]');
-        let totalProfit = 0, currentStake = 0, tickHistory = [], userBalance = 0, steps = 0;
+        let ws, isRunning = false, isBuying = false, isWaiting = false;
+        let accounts = JSON.parse(localStorage.getItem('hunter_accounts') || '[]');
+        let totalProfit = 0, currentStake = 0, tickHistory = [], userBalance = 0;
 
-        window.onload = () => {
-            renderAccountList();
-            loadSettings();
-            initChart();
-        };
-
-        function initChart() {
-            const chart = document.getElementById('digitChart');
-            chart.innerHTML = '';
-            for(let i=0; i<10; i++) {
-                chart.innerHTML += `<div class="flex-1 flex flex-col items-center gap-2">
-                    <div id="bar-${i}" class="w-full bg-blue-500/30 border-t border-blue-400 rounded-sm bar-transition" style="height: 0%"></div>
-                    <span class="text-[8px] font-bold text-slate-600">${i}</span>
-                </div>`;
-            }
-        }
-
-        function saveSettings() {
-            const settings = {
-                t: document.getElementById('targetProfit').value,
-                f: document.getElementById('minBalance').value,
-                s: document.getElementById('stakeAwal').value,
-                m: document.getElementById('maxSteps').value
-            };
-            localStorage.setItem('hunter_settings', JSON.stringify(settings));
-        }
-
-        function loadSettings() {
-            const s = JSON.parse(localStorage.getItem('hunter_settings'));
-            if(s) {
-                document.getElementById('targetProfit').value = s.t;
-                document.getElementById('minBalance').value = s.f;
-                document.getElementById('stakeAwal').value = s.s;
-                document.getElementById('maxSteps').value = s.m;
-            } else {
-                // Defaults
-                document.getElementById('targetProfit').value = "10.00";
-                document.getElementById('minBalance').value = "50.00";
-                document.getElementById('stakeAwal').value = "1.00";
-            }
-        }
+        // Auto-select first account for stability if available
+        window.onload = () => { if(accounts.length > 0) document.getElementById('activeAccount').innerHTML = `<option value="0">${accounts[0].name}</option>`; };
 
         function toggleBot() {
             if (isRunning) return stopBot();
-            saveSettings();
-            const idx = document.getElementById('activeAccount').value;
-            if (!idx) return alert("Select profile.");
+            if (accounts.length === 0) return alert("Please add an API token first.");
+            
             currentStake = parseFloat(document.getElementById('stakeAwal').value);
-            totalProfit = 0; steps = 0;
-            initWebSocket(accounts[idx].token);
+            totalProfit = 0;
+            isWaiting = false;
+            initWebSocket(accounts[0].token);
         }
 
         function initWebSocket(token) {
             ws = new WebSocket(`wss://ws.binaryws.com/websockets/v3?app_id=${APP_ID}`);
             ws.onopen = () => ws.send(JSON.stringify({ authorize: token }));
-            ws.onclose = () => { if(isRunning) stopBot(); };
             ws.onmessage = (msg) => {
                 const data = JSON.parse(msg.data);
                 if (data.msg_type === 'authorize') {
-                    userBalance = data.authorize.balance;
                     ws.send(JSON.stringify({ balance: 1, subscribe: 1 }));
                     ws.send(JSON.stringify({ ticks_history: "1HZ100V", end: "latest", count: 100, subscribe: 1 }));
                     startBot();
                 }
                 if (data.msg_type === 'balance') {
                     userBalance = data.balance.balance;
-                    document.getElementById('statBalance').innerText = `$${userBalance.toFixed(2)}`;
+                    document.getElementById('statNextStake').innerText = `$${currentStake.toFixed(2)}`;
                     checkSafety();
                 }
                 if (data.msg_type === 'history') tickHistory = data.history.prices.map(p => parseInt(p.toString().slice(-1)));
                 if (data.msg_type === 'tick') {
                     tickHistory.push(parseInt(data.tick.quote.toString().slice(-1)));
                     if(tickHistory.length > 100) tickHistory.shift();
-                    updateChartAndAnalyze();
+                    analyze();
                 }
-                if (data.msg_type === 'buy') ws.send(JSON.stringify({ proposal_open_contract: 1, contract_id: data.buy.contract_id, subscribe: 1 }));
+                if (data.msg_type === 'buy') {
+                    ws.send(JSON.stringify({ proposal_open_contract: 1, contract_id: data.buy.contract_id, subscribe: 1 }));
+                }
                 if (data.msg_type === 'proposal_open_contract' && data.proposal_open_contract.is_sold) {
-                    ws.send(JSON.stringify({ forget: data.subscription.id }));
                     processResult(data.proposal_open_contract);
                 }
             };
         }
 
-        function updateChartAndAnalyze() {
+        function analyze() {
+            if (!isRunning || isBuying || isWaiting || tickHistory.length < 50) return;
+
             const counts = Array(10).fill(0);
             tickHistory.forEach(d => counts[d]++);
             
             let least = 0, min = 101;
-            counts.forEach((c, i) => {
-                const height = (c / tickHistory.length) * 100;
-                document.getElementById(`bar-${i}`).style.height = `${height * 3}%`;
-                if(c < min) { min = c; least = i; }
-            });
+            counts.forEach((c, i) => { if(c < min) { min = c; least = i; } });
 
             const prob = (min / tickHistory.length) * 100;
             document.getElementById('statProb').innerText = prob.toFixed(1) + "%";
-            document.getElementById('statSteps').innerText = `${steps}/${document.getElementById('maxSteps').value}`;
 
-            if (isRunning && !isBuying && prob <= parseFloat(document.getElementById('probLimit').value)) {
+            // Safety Logic: Only enter if the digit hasn't appeared in the last 5 ticks
+            const recentTicks = tickHistory.slice(-5);
+            const isTrending = recentTicks.includes(least);
+
+            if (prob <= 8 && !isTrending) {
                 sendTrade(least);
+            } else {
+                document.getElementById('statStatus').innerText = "Scanning Pattern...";
+                document.getElementById('statStatus').className = "text-sm font-black mono text-blue-400";
             }
         }
 
         function sendTrade(target) {
             isBuying = true;
+            document.getElementById('statStatus').innerText = "Executing Differ " + target;
             ws.send(JSON.stringify({
                 "buy": 1, "price": parseFloat(currentStake.toFixed(2)),
                 "parameters": { 
@@ -247,31 +182,45 @@
         function processResult(c) {
             const p = parseFloat(c.profit);
             totalProfit += p;
+            
             if (p > 0) {
                 currentStake = parseFloat(document.getElementById('stakeAwal').value);
-                steps = 0;
                 log(`WIN: +$${p.toFixed(2)}`, 'win');
+                isBuying = false;
             } else {
-                steps++;
-                const maxSteps = parseInt(document.getElementById('maxSteps').value);
-                if (steps >= maxSteps) {
-                    log(`MAX STEPS REACHED. Resetting to base.`, 'info');
-                    currentStake = parseFloat(document.getElementById('stakeAwal').value);
-                    steps = 0;
-                } else {
-                    const mx = parseFloat(document.getElementById('martingaleX').value);
-                    currentStake = parseFloat((currentStake * mx).toFixed(2));
-                    log(`LOSS: Martingale step ${steps}`, 'loss');
-                }
+                log(`LOSS DETECTED. Activating Shield.`, 'loss');
+                activateCooldown();
+                currentStake = parseFloat((currentStake * 11).toFixed(2));
             }
             updateUI();
-            setTimeout(() => { isBuying = false; }, 2000); 
+        }
+
+        function activateCooldown() {
+            isWaiting = true;
+            isBuying = false;
+            let timer = parseInt(document.getElementById('cooldownSec').value);
+            const interval = setInterval(() => {
+                document.getElementById('statStatus').innerText = `Cooldown: ${timer}s`;
+                document.getElementById('statStatus').className = "text-sm font-black mono status-wait";
+                timer--;
+                if (timer < 0) {
+                    clearInterval(interval);
+                    isWaiting = false;
+                    log("Shield Deactivated. Resuming.", "info");
+                }
+            }, 1000);
         }
 
         function checkSafety() {
-            const target = parseFloat(document.getElementById('targetProfit').value);
-            const floor = parseFloat(document.getElementById('minBalance').value);
-            if (userBalance <= floor || totalProfit >= target) stopBot();
+            if (totalProfit >= parseFloat(document.getElementById('targetProfit').value)) {
+                log("TARGET HIT. Stopping to protect profit.", "win");
+                stopBot();
+            }
+        }
+
+        function log(m, t) {
+            const entry = `<div class="${t}">[${new Date().toLocaleTimeString()}] ${m}</div>`;
+            document.getElementById('log').insertAdjacentHTML('afterbegin', entry);
         }
 
         function updateUI() {
@@ -280,43 +229,22 @@
             pEl.className = `text-xl font-black mono ${totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`;
         }
 
-        function log(m, t) {
-            document.getElementById('log').insertAdjacentHTML('afterbegin', `<div class="${t}">[${new Date().toLocaleTimeString()}] ${m}</div>`);
-        }
-
         function startBot() {
             isRunning = true;
-            document.getElementById('btnAction').innerText = "STOP ENGINE";
-            document.getElementById('btnAction').classList.replace('bg-blue-600', 'bg-red-600');
-            document.getElementById('connBadge').innerText = "Live";
-            document.getElementById('connBadge').classList.replace('text-red-500', 'text-green-500');
-            log("Optimized Engine Engaged.", "info");
+            document.getElementById('btnAction').innerText = "HALT SYSTEM";
+            document.getElementById('btnAction').classList.replace('bg-yellow-600', 'bg-red-600');
+            document.getElementById('connBadge').innerText = "Shield On";
+            document.getElementById('connBadge').className = "px-5 py-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-500 text-[10px] font-black uppercase";
         }
 
         function stopBot() {
-            isRunning = false; if(ws) ws.close();
-            document.getElementById('btnAction').innerText = "START OPTIMIZED ENGINE";
-            document.getElementById('btnAction').classList.replace('bg-red-600', 'bg-blue-600');
+            isRunning = false; isBuying = false; isWaiting = false;
+            if(ws) ws.close();
+            document.getElementById('btnAction').innerText = "ENGAGE STABILIZER";
+            document.getElementById('btnAction').classList.replace('bg-red-600', 'bg-yellow-600');
             document.getElementById('connBadge').innerText = "Offline";
-            document.getElementById('connBadge').classList.replace('text-green-500', 'text-red-500');
+            document.getElementById('connBadge').className = "px-5 py-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-black uppercase";
         }
-
-        function renderAccountList() {
-            const s = document.getElementById('activeAccount');
-            s.innerHTML = '<option value="">-- Profile --</option>';
-            accounts.forEach((a, i) => s.innerHTML += `<option value="${i}">${a.name}</option>`);
-        }
-        function openAccountModal() { document.getElementById('accountModal').classList.replace('hidden', 'flex'); }
-        function closeAccountModal() { document.getElementById('accountModal').classList.replace('flex', 'hidden'); }
-        function saveNewAccount() {
-            const n = document.getElementById('newAccName').value, t = document.getElementById('newAccToken').value;
-            if(!n || !t) return;
-            accounts.push({ name: n, token: t });
-            localStorage.setItem('hunter_accounts', JSON.stringify(accounts));
-            renderAccountList(); closeAccountModal();
-        }
-        function clearJournal() { document.getElementById('log').innerHTML = ''; }
-        function loadSelectedAccount() { /* Logic handled in toggle */ }
     </script>
 </body>
 </html>
